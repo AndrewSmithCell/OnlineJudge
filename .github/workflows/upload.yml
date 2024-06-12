@@ -1,16 +1,16 @@
 name: Create Archive
 on: 
-  push:
-    branches: [ master ]
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Test scenario tags'    
+        description: 'tags to create build'
 jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4
+      with:
+        ref: master
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
@@ -27,9 +27,9 @@ jobs:
       with:
         type: '7z'
         filename: 'release.7z'
-    - name: Upload release binaries
-      uses: alexellis/upload-assets@0.4.0
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+    - name: create release and upload assets
+      uses: softprops/action-gh-release@v2
       with:
-        asset_paths: '["release.7z"]'
+        files: release.7z
+        tag_name: ${{ github.event.inputs.tags }}
+
