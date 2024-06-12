@@ -1,8 +1,11 @@
 name: Create Archive
 on: 
   push:
-    tags:
-      - '*'
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario tags'    
 jobs:
   build:
     runs-on: windows-latest
@@ -24,6 +27,9 @@ jobs:
       with:
         type: '7z'
         filename: 'release.7z'
-    - uses: ncipollo/release-action@v1
+    - name: Upload release binaries
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       with:
-        artifacts: "release.7z"
+        asset_paths: '["release.7z"]'
